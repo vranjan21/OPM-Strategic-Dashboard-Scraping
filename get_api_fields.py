@@ -145,7 +145,7 @@ with open('api_fields.csv', 'w', encoding='utf-8-sig') as myfile:
     list_length = len(four_by_four_list)
 
     wr.writerow(['4x4 (testing only)', 'Measure Link (testing only)', 'Measure ID', 'Measure Name', 'Reporting Frequency', 'Most Recent Reporting Year',
-                 'Measure Status Color', 'Measure Value', 'Target Value', 'Time Stamp of Last Data Entry',
+                 'Measure Status Color', 'Measure Value', 'Target Value', 'Metadata Update Date',
                  'Link to Story'])
     while index < list_length:
         wr.writerow([four_by_four_list[index], measure_link_list[index], measure_id_list[index], measure_name_list[index], '', '',
