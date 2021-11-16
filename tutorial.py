@@ -13,12 +13,6 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 
-#import date time package
-from datetime import datetime
-
-# imports csv
-import csv
-
 import os  # allows python to use operating system dependent functions
 from selenium.webdriver.support.ui import WebDriverWait  # wait for the page to load
 from selenium.webdriver.support import expected_conditions  # wait for the page to load
@@ -44,34 +38,27 @@ driver.implicitly_wait(30)
 # can totally just navigate to a "waiting for json measure" page or something to populate the chrome window
 # might be necessary if API calls take a really long time before it starts navigating somewhere
 
-four_by_four_list = []
+# iterates through the measure ID list
+for measure_id in ['w7fi-einn', 'vyzh-pff9']:
 
-# open the list of measure 4x4s in read mode
-with open('measures_four_by_four_list.csv', 'r') as read_obj:
-    # pass the file object to csv.reader() to get the reader object
-    csv_reader = csv.reader(read_obj)
-    # Iterate over each row in the csv using reader object
-    for row in csv_reader:
-        # link variable is a list that represents a link in each csv
-        for link in row:
-            # adds the link to the list of urls
-            four_by_four_list.append(link)
+    # construct the measure json url to access
+    measure_json_url = JSON_META_START_URL + measure_id
 
-measure_value = []
-
-measure_color = []
-
-most_recent_reporting_year = []
-
-reporting_frequency = []
-
-page_update_date = []
-
-for four_by_four in four_by_four_list:
-    print(four_by_four)
-    
-    measure_json_url = JSON_META_START_URL + four_by_four
+    # get the raw JSON object
     measure_meta = json.load(urllib.request.urlopen(measure_json_url))
+
+    # print the raw JSON object
+    print("Raw meta:")
+    print(measure_meta)
+    print()
+
+    # get the date the measure was last updated
+    measure_updated_at = measure_meta['dataUpdatedAt']
+
+    # print the date the measure was last updated
+    print("Data Updated On: ")
+    print(measure_updated_at)
+    print()
 
     # get the measure page URL from the metadata
     scrape_url = measure_meta['dataUri']
@@ -79,7 +66,7 @@ for four_by_four in four_by_four_list:
     # navigate Selenium chrome driver to the measure page URL and waits until page is fully loaded
     driver.get(scrape_url)
 
- # wait until calculated measure result number is fully loaded
+    # wait until calculated measure result number is fully loaded
     try:
         WebDriverWait(driver, 30).until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
     except TimeoutException:
@@ -88,3 +75,19 @@ for four_by_four in four_by_four_list:
 
     # Selenium hands the page source to BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "lxml")
+
+    # finds and stores the HTML tag with the class "measure-result-big-number"
+    measure_result = soup.find(class_="measure-result-big-number")
+
+    # prints the raw HTML of the measure result
+    print("Raw Measure Result:")
+    print(measure_result)
+    print()
+
+    # stores the excerpt of the actual measure value string
+    measure_result_value = str(measure_result.string)
+
+    # prints the measure result
+    print("measure result string: ")
+    print(measure_result_value)
+    print()
