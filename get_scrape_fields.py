@@ -45,23 +45,34 @@ driver.implicitly_wait(30)
 # might be necessary if API calls take a really long time before it starts navigating somewhere
 
 four_by_four_list = []
+measure_link_list = []
+story_link_list = []
 
 # open the list of measure 4x4s in read mode
-with open('measures_four_by_four_list.csv', 'r') as read_obj:
+with open('api_fields.csv', 'r') as read_obj:
     # pass the file object to csv.reader() to get the reader object
     csv_reader = csv.reader(read_obj)
+
+    # skip the first row of headers
+    next(csv_reader)
+
     # Iterate over each row in the csv using reader object
     for row in csv_reader:
         # link variable is a list that represents a link in each csv
-        for link in row:
-            # adds the link to the list of urls
-            four_by_four_list.append(link)
+        four_by_four_list.append(row[0])
+        measure_link_list.append(row[1])
+        story_link_list.append(row[10])
 
-measure_link_list = []
+print(four_by_four_list)
+print(measure_link_list)
+print(story_link_list)
+
 
 measure_value_list = []
 
 measure_color_list = []
+
+measure_status_list = []
 
 most_recent_reporting_year_list = []
 
@@ -69,23 +80,16 @@ reporting_frequency_list = []
 
 page_update_date_list = []
 
-
-for four_by_four in four_by_four_list:
-    print(four_by_four)
-    # internal testing only - adds the link of the measure to a list for the output
-    measure_link = 'https://data.austintexas.gov/d/' + four_by_four
-    measure_link_list.append(measure_link)
-
-    measure_json_url = JSON_META_START_URL + four_by_four
-    measure_meta = json.load(urllib.request.urlopen(measure_json_url))
-
-    # get the measure page URL from the metadata
-    scrape_url = measure_meta['dataUri']
+index = 0
+list_length = len(four_by_four_list)
+while index < list_length:
+    # scraping the measure page values
+    scrape_url = measure_link_list[index]
 
     # navigate Selenium chrome driver to the measure page URL and waits until page is fully loaded
     driver.get(scrape_url)
 
- # wait until calculated measure result number is fully loaded
+    # wait until calculated measure result number is fully loaded
     try:
         WebDriverWait(driver, 30).until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
     except TimeoutException:
@@ -94,6 +98,29 @@ for four_by_four in four_by_four_list:
 
     # Selenium hands the page source to BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "lxml")
+
+    # TO-DO: collect data from the measure page and store in the corresponding lists
+    # TO-DO: Measure Value
+    # TO-DO: Color of Measure Card
+    # TO-DO: Status of Measure Card
+    # TO-DO: Most Recent Reporting Year
+
+    # scraping the story page values
+    # we do this separately because there are some stories that have multiple measures
+    scrape_url = story_link_list[index]
+
+    # navigate Selenium chrome driver to the measure page URL and waits until page is fully loaded
+    driver.get(scrape_url)
+
+    # wait until calculated measure result number is fully loaded
+    try:
+        WebDriverWait(driver, 30).until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
+    except TimeoutException:
+        print("link not found ... breaking out")
+        print()
+
+
+    index = index + 1
 
 
 # write the csv files
@@ -109,9 +136,13 @@ with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
     index = 0
     list_length = len(four_by_four_list)
 
-    wr.writerow(['4x4 (testing only)', 'Measure Link (testing only)', 'Most Recent Reporting Year',
+    wr.writerow(['4x4 (testing only)', 'Measure Link (testing only)', 'Story Link',
+                 'Measure Value', 'Measure Color', ' Measure Status',
+                 'Most Recent Reporting Year',
                  'Reporting Frequency', 'Page Update Date'])
     while index < list_length:
-        wr.writerow([four_by_four_list[index], measure_link_list[index], most_recent_reporting_year_list[index],
+        wr.writerow([four_by_four_list[index], measure_link_list[index], story_link_list[index],
+                     measure_value_list[index], measure_color_list[index], measure_status_list[index],
+                     most_recent_reporting_year_list[index],
                      reporting_frequency_list[index], page_update_date_list[index]])
         index = index + 1
