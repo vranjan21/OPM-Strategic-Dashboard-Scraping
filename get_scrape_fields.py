@@ -57,15 +57,21 @@ with open('measures_four_by_four_list.csv', 'r') as read_obj:
             # adds the link to the list of urls
             four_by_four_list.append(link)
 
-measure_value = []
+measure_link_list = []
 
-measure_color = []
+measure_value_list = []
 
-most_recent_reporting_year = []
+measure_color_list = []
 
-reporting_frequency = []
+most_recent_reporting_year_list = []
 
-page_update_date = []
+reporting_frequency_list = []
+
+page_update_date_list = []
+
+# internal testing only - adds the link of the measure to a list for the output
+measure_link = 'https://data.austintexas.gov/d/' + four_by_four
+measure_link_list.append(measure_link)
 
 for four_by_four in four_by_four_list:
     print(four_by_four)
@@ -88,3 +94,24 @@ for four_by_four in four_by_four_list:
 
     # Selenium hands the page source to BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "lxml")
+
+
+# write the csv files
+# note: to get apostrophes to display properly in excel have to encode as utf-8
+with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
+
+    # feeds the field names in through a Python Dictionary
+    # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+
+
+    # write each of the field columns  to csv
+    index = 0
+    list_length = len(four_by_four_list)
+
+    wr.writerow(['4x4 (testing only)', 'Measure Link (testing only)', 'Most Recent Reporting Year',
+                 'Reporting Frequency', 'Page Update Date'])
+    while index < list_length:
+        wr.writerow([four_by_four_list[index], measure_link_list[index], most_recent_reporting_year_list[index],
+                     reporting_frequency_list[index], page_update_date_list[index]])
+        index = index + 1

@@ -133,13 +133,6 @@ with open('api_fields.csv', 'w', encoding='utf-8-sig') as myfile:
     # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 
-    # replace with the following when done
-    # this is a DictWriter and not a writer because we have headers/fields
-    # have to also modify data to be a dictionary
-    # wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, fieldnames=header)
-
-    # wr.writeheader()
-
     # write each of the field columns  to csv
     index = 0
     list_length = len(four_by_four_list)
