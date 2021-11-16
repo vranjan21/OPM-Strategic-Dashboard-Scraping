@@ -70,11 +70,13 @@ print(story_link_list)
 
 measure_value_list = []
 
+measure_status_list = []
+
 measure_color_list = []
 
 measure_status_list = []
 
-most_recent_reporting_year_list = []
+recent_reporting_year_list = []
 
 reporting_frequency_list = []
 
@@ -119,6 +121,27 @@ while index < list_length:
         print("link not found ... breaking out")
         print()
 
+    # Selenium hands the page source to BeautifulSoup
+    soup = BeautifulSoup(driver.page_source, "lxml")
+
+    # finds and stores the HTML tag with the class "measure-result-big-number"
+    measure_value = soup.find(class_="measure-result-big-number")
+    measure_value_list.append(measure_value)
+
+    measure_status = soup.find(class_="status-banner-text")
+    measure_status_list.append(measure_status)
+
+    #measure_color = 
+    #measure_color_list.append(measure_color)
+
+    recent_reporting_year = soup.find(class_="reporting-year-latest")
+    recent_reporting_year = "20" + recent_reporting_year[15:]
+    recent_reporting_year_list.append()
+
+
+
+
+
 
     index = index + 1
 
@@ -143,6 +166,6 @@ with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
     while index < list_length:
         wr.writerow([four_by_four_list[index], measure_link_list[index], story_link_list[index],
                      measure_value_list[index], measure_color_list[index], measure_status_list[index],
-                     most_recent_reporting_year_list[index],
+                     recent_reporting_year_list[index],
                      reporting_frequency_list[index], page_update_date_list[index]])
         index = index + 1
