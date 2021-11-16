@@ -69,13 +69,13 @@ reporting_frequency_list = []
 
 page_update_date_list = []
 
-# internal testing only - adds the link of the measure to a list for the output
-measure_link = 'https://data.austintexas.gov/d/' + four_by_four
-measure_link_list.append(measure_link)
 
 for four_by_four in four_by_four_list:
     print(four_by_four)
-    
+    # internal testing only - adds the link of the measure to a list for the output
+    measure_link = 'https://data.austintexas.gov/d/' + four_by_four
+    measure_link_list.append(measure_link)
+
     measure_json_url = JSON_META_START_URL + four_by_four
     measure_meta = json.load(urllib.request.urlopen(measure_json_url))
 
