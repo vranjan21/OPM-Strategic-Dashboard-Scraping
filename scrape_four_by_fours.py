@@ -42,12 +42,13 @@ measure_link_list = []
 # create a blank list to store measure 4x4s
 four_by_list = []
 
-# gets all unique URLs in the list as a set
+# gets all unique URLs in the list as dict
+# then returns the dict as a list
 # this eliminates duplicate URLs
-url_set = set(url_list)
+unique_url_list = list(dict.fromkeys(url_list))
 
 # iterates through url list
-for url in url_set:
+for url in unique_url_list:
     # navigates to the story URL page
     driver.get(url)
 
@@ -65,14 +66,14 @@ for url in url_set:
     # Selenium hands the page source to BeautifulSoup
     soup = BeautifulSoup(driver.page_source, "lxml")
 
-    # gets a set of all the unique measure links in the story page
-    # usually only one will be in the set
+    # gets a list of all the unique measure links in the story page
+    # usually only one will be in the list
     # except there's weird story pages like https://data.austintexas.gov/stories/s/uwxu-e5zh
-    measure_link_set = set(soup.find_all(class_="view-measure-link"))
+    unique_measure_link_list = list(dict.fromkeys(soup.find_all(class_="view-measure-link")))
 
     # iterates through the measure links in the measure link set
     # usually only one iteration
-    for measure_link in measure_link_set:
+    for measure_link in unique_measure_link_list:
         # finds the very first match of a URL
         measure_link_raw = measure_link.find('a', href=True)
         measure_link_text = measure_link_raw['href']

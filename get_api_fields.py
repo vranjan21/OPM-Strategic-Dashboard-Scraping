@@ -145,3 +145,4 @@ with open('api_fields.csv', 'w', encoding='utf-8-sig') as myfile:
                      '', '', measure_target_value_list[index], measure_data_last_timestamp_list[index],
                      measure_story_link_list[index]])
         index = index + 1
+
