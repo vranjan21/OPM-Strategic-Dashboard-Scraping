@@ -21,7 +21,11 @@ import re
 #import date time package
 from datetime import datetime
 
+# create a blank list to store the four by fours
 four_by_four_list = []
+
+# create a blank list to store the story page links
+measure_story_link_list = []
 
 # open the list of measure 4x4s in read mode
 with open('measures_four_by_four_list.csv', 'r') as read_obj:
@@ -29,10 +33,10 @@ with open('measures_four_by_four_list.csv', 'r') as read_obj:
     csv_reader = csv.reader(read_obj)
     # Iterate over each row in the csv using reader object
     for row in csv_reader:
-        # link variable is a list that represents a link in each csv
-        for link in row:
-            # adds the link to the list of urls
-            four_by_four_list.append(link)
+        # append the first item in the row at index 0 which is the 4x4 to the four_by_four_list
+        four_by_four_list.append(row[0])
+        # append the second item in the row at index 1 which is the story link to the measure_story_link_list
+        measure_story_link_list.append(row[1])
 
 # testing only - create a blank list to store measure links
 measure_link_list = []
@@ -49,8 +53,6 @@ measure_target_value_list = []
 # create a blank list to store measure timestamps
 measure_data_last_timestamp_list = []
 
-# create a blank list to store the story page links
-measure_story_link_list = []
 
 # compiles the regex expression to search for
 MEASURE_ID_SEARCH = re.compile("^.*?(?=(_|-| ))")
@@ -85,8 +87,17 @@ for four_by_four in four_by_four_list:
 
     # checks whether the target value exists
     if 'value' in measure_meta_two['metricConfig']['targets'][0]:
-        # if value exists, collect the value of the target
-        measure_target_value = measure_meta_two['metricConfig']['targets'][0]['value']
+        target_value_index = -1
+
+        # while the target value doesn't exist for the last element of the list,
+        # de-iterate until there exists a target value
+        while 'value' not in measure_meta_two['metricConfig']['targets'][target_value_index]:
+            # if value exists, collect the value of the target
+            target_value_index = target_value_index - 1
+
+        # stores the very last existing
+        measure_target_value = measure_meta_two['metricConfig']['targets'][target_value_index]['value']
+
     else:
         # if value does not exist, make the value "does not exist"
         measure_target_value = "Does not exist"
@@ -104,15 +115,15 @@ for four_by_four in four_by_four_list:
     measure_link = 'https://data.austintexas.gov/d/' + four_by_four
     measure_link_list.append(measure_link)
 
-    measure_story_link_text = str(measure_meta_two['metadata'])
+    # measure_story_link_text = str(measure_meta_two['metadata'])
 
 
-    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>\\]+|\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\))+(?:\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\)|[^\s`!()\[\]{};:'\".,<>\\?«»“”‘’]))"
+    # regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>\\]+|\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\))+(?:\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\)|[^\s`!()\[\]{};:'\".,<>\\?«»“”‘’]))"
 
-    measure_story_link_search = re.findall(regex, measure_story_link_text)
-    measure_story_link = [x[0] for x in measure_story_link_search][0]
+    # measure_story_link_search = re.findall(regex, measure_story_link_text)
+    # measure_story_link = [x[0] for x in measure_story_link_search][0]
 
-    print(measure_story_link)
+    # print(measure_story_link)
 
     # append the measure ID to the list of measure IDs
     measure_id_list.append(measure_id)
@@ -122,8 +133,10 @@ for four_by_four in four_by_four_list:
     measure_target_value_list.append(measure_target_value)
     # append the timestamp to the list of timestamps
     measure_data_last_timestamp_list.append(measure_data_last_timestamp)
+
+    # commented and to-be-deleted because we will be getting the measure story links in the initial process
     # append the measure story link to the list of measure story links
-    measure_story_link_list.append(measure_story_link)
+    # measure_story_link_list.append(measure_story_link)
 
 # write the csv files
 # note: to get apostrophes to display properly in excel have to encode as utf-8
