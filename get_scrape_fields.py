@@ -7,6 +7,8 @@
 # make sure you have the right version chrome driver in the /venv/bin
 
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 # regex
@@ -40,7 +42,7 @@ import urllib.request
 JSON_META_START_URL = "https://data.austintexas.gov/api/views/metadata/v1/"
 
 # create a new chrome session called driver
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(ChromeDriverManager().install())
 
 # set driver to wait for up to 30 seconds for an element before throwing an exception
 driver.implicitly_wait(30)

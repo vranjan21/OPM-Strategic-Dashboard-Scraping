@@ -1,7 +1,9 @@
 # make sure you have the right version chrome driver in the /venv/bin
 
+# make sure to pip install webdriver manager
 # imports Selenium and webdriver to run the chrome window
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 # imports BeautifulSoup to parse the webpage xml
 from bs4 import BeautifulSoup
@@ -19,7 +21,7 @@ import time
 import csv
 
 # create a new chrome session called driver
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(ChromeDriverManager().install())
 
 # set driver to wait for up to 30 seconds for an element before throwing an exception
 driver.implicitly_wait(30)
