@@ -149,15 +149,16 @@ while index < list_length:
         # gets the last two characters/digits of the recent reporting year range
         # appends "20" to the start of the last two characters/digits
         # stores the value as recent_reporting_year
-        recent_reporting_year = "20" + recent_reporting_year_range[-2:]
-        if recent_reporting_year == '20ay':
-            recent_reporting_year = datetime.now().year
+        #recent_reporting_year = "20" + recent_reporting_year_range[-2:]
+        #if recent_reporting_year == '20ay':
+            #recent_reporting_year = datetime.now().year
 
     except AttributeError:
         # if this value doesn't exist, print that it Does not exist
-        recent_reporting_year = "Does not exist"
+        recent_reporting_year_range = "Does not exist"
 
-    print(recent_reporting_year)
+    #print(recent_reporting_year)
+    print(recent_reporting_year_range)
     # recent_reporting_year_list.append(recent_reporting_year)
 
     recent_reporting_year_list.append(recent_reporting_year_range)
