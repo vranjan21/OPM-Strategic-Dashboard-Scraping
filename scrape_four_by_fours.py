@@ -25,7 +25,7 @@ driver = webdriver.Chrome()
 driver.implicitly_wait(30)
 
 
-url_list = []
+story_link_list = []
 # open file in read mode
 with open('story_link_list.csv', 'r') as read_obj:
     # pass the file object to reader() to get the reader object
@@ -34,23 +34,30 @@ with open('story_link_list.csv', 'r') as read_obj:
     for row in csv_reader:
         # row variable is a list that represents a row in csv
         for link in row:
-            url_list.append(link)
+            story_link_list.append(link)
 
 # create a blank list to store measure links
 measure_link_list = []
 
 # create a blank list to store measure 4x4s
-four_by_list = []
+four_by_four_list = []
 
 # gets all unique URLs in the list as dict
 # then returns the dict as a list
 # this eliminates duplicate URLs
-unique_url_list = list(dict.fromkeys(url_list))
+unique_story_link_list = list(dict.fromkeys(story_link_list))
 
-# iterates through url list
-for url in unique_url_list:
+# create a list to store all the story links as the measures list is populated with measures 4x4s
+# so that the story link has the same index in the story link list as the
+# corresponding 4x4 has in the measure list.
+# There will be duplicate story links in the story link list due to
+# having multiple measures within the same story.
+ordered_story_link_list = []
+
+# iterates through unique story link list
+for story_link in unique_story_link_list:
     # navigates to the story URL page
-    driver.get(url)
+    driver.get(story_link)
 
     # wait until calculated measure result number is fully loaded
     # then delays 200 milliseconds just in case there are additional elements
@@ -78,22 +85,24 @@ for url in unique_url_list:
         measure_link_raw = measure_link.find('a', href=True)
         measure_link_text = measure_link_raw['href']
         print(measure_link_text)
-        measure_link_list.append(measure_link_text)
+        # measure_link_list.append(measure_link_text)
         four_by_four_text = measure_link_text[-9:]
         print(four_by_four_text)
-        four_by_list.append(four_by_four_text)
+        four_by_four_list.append(four_by_four_text)
+        ordered_story_link_list.append(story_link)
 
 # write the csv files
-with open('measures_link_list.csv', 'w') as myfile:
-    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    for link in measure_link_list:
-        wr.writerow([link])
-    print("measures_link_list.csv is written to the project directory")
-
 with open('measures_four_by_four_list.csv', 'w') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-    for link in four_by_list:
-        wr.writerow([link])
+
+    # write each of the field columns to a csv file
+    index = 0
+    list_length = len(four_by_four_list)
+
+    while index < list_length:
+        wr.writerow([four_by_four_list[index], ordered_story_link_list[index]])
+        index = index + 1
+
     print("measures_four_by_four_list.csv is written to the project directory")
 
 # end the Selenium browser session and closes the browser window
