@@ -12,9 +12,6 @@ import urllib.request
 # import json
 import json
 
-# import url
-import urllib.request
-
 # import regex
 import re
 

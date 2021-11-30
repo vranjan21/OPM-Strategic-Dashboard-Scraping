@@ -38,7 +38,6 @@ import json
 # import url
 import urllib.request
 
-# access the Measure JSON definition API endpoint
 JSON_META_START_URL = "https://data.austintexas.gov/api/views/metadata/v1/"
 
 # create a new chrome session called driver
@@ -73,14 +72,15 @@ print(four_by_four_list)
 print(measure_link_list)
 print(story_link_list)
 
+measure_id_list = []
+
+measure_name_list = []
 
 measure_value_list = []
 
 measure_status_list = []
 
-measure_color_list = []
-
-measure_status_list = []
+measure_target_value_list = []
 
 recent_reporting_year_list = []
 
@@ -88,10 +88,70 @@ reporting_frequency_list = []
 
 page_update_date_list = []
 
+measure_data_last_timestamp_list = []
+
+MEASURE_ID_SEARCH = re.compile("^.*?(?=(_|-| ))")
 FREQUENCY_MEASURE_SEARCH = re.compile("(?<=Reported:.)[^\n]*(?=Date)")
 FREQUENCY_MEASURE_NO_UPDATE_SEARCH = re.compile("(?<=Reported:.)[^\n]*(?=Present)")
 PAGE_UPDATE_DATE_SEARCH = re.compile("(?<=last updated:.)[^\n]*(?=Present)")
 
+# iterates through url list
+for four_by_four in four_by_four_list:
+    print(four_by_four)
+    # constructs the json URL for the two API calls
+    measure_meta_one_url = "https://data.austintexas.gov/api/views/metadata/v1/" + four_by_four
+    measure_meta_two_url = "https://data.austintexas.gov/api/measures_v1/" + four_by_four
+
+    # get the raw JSON object from the first metadata url
+    measure_meta_one = json.load(urllib.request.urlopen(measure_meta_one_url))
+
+    # get the raw JSON object from the second metadata url
+    measure_meta_two = json.load(urllib.request.urlopen(measure_meta_two_url))
+
+    # get the date the measure was last updated
+    measure_name_full = measure_meta_one['name']
+    print(measure_name_full)
+
+    # search for the measure name using the compiled regex search
+    measure_id = re.search(MEASURE_ID_SEARCH, measure_name_full).group(0)
+
+    # compile a regex expression to get the rest of the name
+    measure_name_search = re.compile("(?<=" + measure_id + ").*")
+
+    measure_name = re.search(measure_name_search, measure_name_full).group(0)[1:]
+
+    print(measure_id)
+    print(measure_name)
+
+    # checks whether the target value exists
+    if 'value' in measure_meta_two['metricConfig']['targets'][0]:
+        target_value_index = -1
+
+        # while the target value doesn't exist for the last element of the list,
+        # de-iterate until there exists a target value
+        while 'value' not in measure_meta_two['metricConfig']['targets'][target_value_index]:
+            # if value exists, collect the value of the target
+            target_value_index = target_value_index - 1
+
+        # stores the very last existing
+        measure_target_value = measure_meta_two['metricConfig']['targets'][target_value_index]['value']
+
+    else:
+        # if value does not exist, make the value "does not exist"
+        measure_target_value = "Does not exist"
+
+    print(measure_target_value)
+
+    # get the date the measure was last updated
+    last_timestamp_string = measure_meta_one['metadataUpdatedAt']
+    last_timestamp_datetime = datetime.strptime(last_timestamp_string, '%Y-%m-%dT%H:%M:%S+0000')
+    measure_data_last_timestamp = last_timestamp_datetime.strftime("%m/%d/%Y")
+
+    print(measure_data_last_timestamp)
+
+    # internal testing only - adds the link of the measure to a list for the output
+    measure_link = 'https://data.austintexas.gov/d/' + four_by_four
+    measure_link_list.append(measure_link)
 
 index = 0
 list_length = len(four_by_four_list)
@@ -214,49 +274,67 @@ while index < list_length:
     # appends the page update date to the list of all page updates
     page_update_date_list.append(page_update_date)
 
-    # page_update_date_list.append(page_update_date)
-
-    # saves every 10 rows
-    if (index + 1) % 10 == 0:
-        with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
-
-            # feeds the field names in through a Python Dictionary
-            # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
-            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-
-            # write each of the field columns to a csv file
-            i = 0
-            sublist_length = len(measure_status_list)
-
-            wr.writerow(['4x4 (testing only)',
-                         'Measure Link (testing only)',
-                         'Story Link',
-                         'Measure Value',
-                         # 'Measure Color',
-                         'Measure Status',
-                         'Most Recent Reporting Year',
-                         'Reporting Frequency',
-                         'Page Update Date'
-                         ])
-            while i < sublist_length:
-                wr.writerow([four_by_four_list[i],
-                             measure_link_list[i],
-                             story_link_list[i],
-                             measure_value_list[i],
-                             # measure_color_list[i],
-                             measure_status_list[i],
-                             recent_reporting_year_list[i],
-                             reporting_frequency_list[i],
-                             page_update_date_list[i]
-                             ])
-                i = i + 1
-
-    index = index + 1
 
 
-# write the csv files
-# note: to get apostrophes to display properly in excel have to encode as utf-8
-with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+with open('all_data_fields.csv', 'w', encoding='utf-8-sig') as myfile:
 
     # feeds the field names in through a Python Dictionary
     # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
@@ -266,26 +344,28 @@ with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
     index = 0
     list_length = len(four_by_four_list)
 
-    wr.writerow(['4x4 (testing only)',
-                 'Measure Link (testing only)',
+    wr.writerow(['Measure ID',
+                 'Measure Name',
                  'Story Link',
                  'Measure Value',
-                 # 'Measure Color',
                  'Measure Status',
+                 'Target Value',
+                 'Reporting Frequency'
                  'Most Recent Reporting Year',
-                 'Reporting Frequency',
                  'Page Update Date'
+                 'Metadata Update Date'
                 ])
     while index < list_length:
-        wr.writerow([four_by_four_list[index],
-                     measure_link_list[index],
+        wr.writerow([measure_id_list[index],
+                     measure_name_list[index],
                      story_link_list[index],
                      measure_value_list[index],
-                     # measure_color_list[index],
                      measure_status_list[index],
-                     recent_reporting_year_list[index],
+                     measure_target_value_list[index],
                      reporting_frequency_list[index],
-                     page_update_date_list[index]
+                     recent_reporting_year_list[index],
+                     page_update_date_list[index],
+                     measure_data_last_timestamp_list[index]
                      ])
         index = index + 1
 
