@@ -1,41 +1,41 @@
+# make sure you install selenium and BeautifulSoup and pandas and lxml parser using
+# python3 -m pip install -U selenium
+# python3 -m pip install beautifulsoup4
+# pip install pandas
+# pip install lxml
+
+# api field imports
+# imports csv
+import csv
+
+# import url
+import urllib.request
+
+# import json
+import json
+
+# import regex
+import re
+
+# import date-time package
+from datetime import datetime
+
+# scrape field imports
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
+from bs4 import BeautifulSoup
+
+from selenium.webdriver.support.ui import WebDriverWait  # wait for the page to load
+from selenium.webdriver.support import expected_conditions  # wait for the page to load
+
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+
+import traceback
+
+
 def get_api_and_scrape():
-
-    # make sure you install selenium and BeautifulSoup and pandas and lxml parser using
-    # python3 -m pip install -U selenium
-    # python3 -m pip install beautifulsoup4
-    # pip install pandas
-    # pip install lxml
-
-    # api field imports
-    # imports csv
-    import csv
-
-    # import url
-    import urllib.request
-
-    # import json
-    import json
-
-    # import regex
-    import re
-
-    # import date-time package
-    from datetime import datetime
-
-    # scrape field imports
-    from selenium import webdriver
-    from webdriver_manager.chrome import ChromeDriverManager
-
-    from bs4 import BeautifulSoup
-
-    from selenium.webdriver.support.ui import WebDriverWait  # wait for the page to load
-    from selenium.webdriver.support import expected_conditions  # wait for the page to load
-
-    from selenium.webdriver.common.by import By
-    from selenium.common.exceptions import TimeoutException
-
-    import traceback
-
 
     # create a blank list to store the four by fours
     four_by_four_list = []
@@ -95,13 +95,11 @@ def get_api_and_scrape():
     FREQUENCY_MEASURE_NO_UPDATE_SEARCH = re.compile("(?<=Reported:.)[^\n]*(?=Present)")
     PAGE_UPDATE_DATE_SEARCH = re.compile("(?<=last updated:.)[^\n]*(?=Present)")
 
-
     # main loop index value
     index = 0
 
     # length of the list of measures to iterate
     list_length = len(four_by_four_list)
-
 
     # write the csv files
     # note: to get apostrophes to display properly in excel have to encode as utf-8
@@ -192,16 +190,6 @@ def get_api_and_scrape():
                 measure_link = 'https://data.austintexas.gov/d/' + four_by_four
                 measure_link_list.append(measure_link)
 
-                # measure_story_link_text = str(measure_meta_two['metadata'])
-
-
-                # regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>\\]+|\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\))+(?:\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\)|[^\s`!()\[\]{};:'\".,<>\\?«»“”‘’]))"
-
-                # measure_story_link_search = re.findall(regex, measure_story_link_text)
-                # measure_story_link = [x[0] for x in measure_story_link_search][0]
-
-                # print(measure_story_link)
-
                 # append the measure ID to the list of measure IDs
                 measure_id_list.append(measure_id)
                 # append the name of the measure to the list of measure names
@@ -218,7 +206,8 @@ def get_api_and_scrape():
 
                 # wait until calculated measure result number is fully loaded
                 try:
-                    WebDriverWait(driver, 30).until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
+                    WebDriverWait(driver, 30).until(
+                        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
                 except TimeoutException:
                     print("link not found ... breaking out")
                     print()
@@ -258,12 +247,6 @@ def get_api_and_scrape():
                 # this is in the format of 1/1/20 - 12/31/20
                 try:
                     recent_reporting_year_range = soup.find(class_="reporting-period-latest").text
-                    # gets the last two characters/digits of the recent reporting year range
-                    # appends "20" to the start of the last two characters/digits
-                    # stores the value as recent_reporting_year
-                    #recent_reporting_year = "20" + recent_reporting_year_range[-2:]
-                    #if recent_reporting_year == '20ay':
-                    recent_reporting_year = datetime.now().year
 
                 except AttributeError:
                     # if this value doesn't exist, print that it Does not exist
@@ -292,7 +275,8 @@ def get_api_and_scrape():
 
                 # wait until calculated measure result number is fully loaded
                 try:
-                    WebDriverWait(driver, 30).until(expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
+                    WebDriverWait(driver, 30).until(
+                        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "measure-result-big-number")))
                 except TimeoutException:
                     print("link not found ... breaking out")
                     print()
@@ -356,13 +340,13 @@ def get_api_and_scrape():
             myfile.flush()
             index = index + 1
 
-
     # write the csv files
     # note: to get apostrophes to display properly in excel have to encode as utf-8
     with open('get_api_and_scrape.csv', 'w', encoding='utf-8-sig') as myfile:
 
         # feeds the field names in through a Python Dictionary
-        # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
+        # also has a quote_all argument
+        # this formats everything in the csv with quotes debatable whether to keep this or not
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 
         # write each of the field columns  to csv
@@ -402,8 +386,8 @@ def get_api_and_scrape():
 
     driver.quit()
 
+
 if __name__ == '__main__':
     # get_api_and_scrape.py executed as script
     # run the above function
     get_api_and_scrape()
-
