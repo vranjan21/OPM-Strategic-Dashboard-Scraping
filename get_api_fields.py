@@ -15,7 +15,7 @@ import json
 # import regex
 import re
 
-#import date time package
+# import date time package
 from datetime import datetime
 
 # create a blank list to store the four by fours

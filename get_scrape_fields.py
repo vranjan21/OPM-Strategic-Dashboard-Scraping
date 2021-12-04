@@ -9,16 +9,9 @@
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
-from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 # regex
 import re
-from regex import regex
-
-import pandas as pd
-
-#import date time package
-from datetime import datetime
 
 # imports csv
 import csv
@@ -38,9 +31,6 @@ import json
 # import url
 import urllib.request
 
-# access the Measure JSON definition API endpoint
-JSON_META_START_URL = "https://data.austintexas.gov/api/views/metadata/v1/"
-
 # create a new chrome session called driver
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
@@ -52,7 +42,7 @@ driver.implicitly_wait(30)
 
 four_by_four_list = []
 measure_link_list = []
-story_link_list = []
+measure_story_link_list = []
 
 # open the list of measure 4x4s in read mode
 with open('api_fields.csv', 'r') as read_obj:
@@ -67,18 +57,16 @@ with open('api_fields.csv', 'r') as read_obj:
         # link variable is a list that represents a link in each csv
         four_by_four_list.append(row[0])
         measure_link_list.append(row[1])
-        story_link_list.append(row[10])
+        measure_story_link_list.append(row[10])
 
 print(four_by_four_list)
 print(measure_link_list)
-print(story_link_list)
+print(measure_story_link_list)
 
 
 measure_value_list = []
 
 measure_status_list = []
-
-measure_color_list = []
 
 measure_status_list = []
 
@@ -169,7 +157,7 @@ while index < list_length:
     # scraping the story page values
     # we do this separately because there are some stories that have multiple measures
     # gets the next story page link
-    scrape_url = story_link_list[index]
+    scrape_url = measure_story_link_list[index]
 
     # if the link isn't a full URL
     if not scrape_url.startswith('http'):
@@ -241,7 +229,7 @@ while index < list_length:
             while i < sublist_length:
                 wr.writerow([four_by_four_list[i],
                              measure_link_list[i],
-                             story_link_list[i],
+                             measure_story_link_list[i],
                              measure_value_list[i],
                              # measure_color_list[i],
                              measure_status_list[i],
@@ -279,7 +267,7 @@ with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
     while index < list_length:
         wr.writerow([four_by_four_list[index],
                      measure_link_list[index],
-                     story_link_list[index],
+                     measure_story_link_list[index],
                      measure_value_list[index],
                      # measure_color_list[index],
                      measure_status_list[index],

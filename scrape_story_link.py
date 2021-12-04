@@ -1,10 +1,10 @@
 # make sure you have the right version chrome driver in the /venv/bin
 
-# imports Selenium and webdriver to run the chrome window
-from selenium import webdriver
-
 # imports the web driver manager to get the matching chrome web driver
 from webdriver_manager.chrome import ChromeDriverManager
+
+# imports Selenium and webdriver to run the chrome window
+from selenium import webdriver
 
 # imports BeautifulSoup to parse the webpage xml
 from bs4 import BeautifulSoup
@@ -29,6 +29,8 @@ url = "https://data.austintexas.gov/stories/s/59fp-raw5"
 
 # create a new Chrome session called driver
 driver = webdriver.Chrome(ChromeDriverManager().install())
+# driver = webdriver.Chrome()
+
 # waits for up to 30 seconds for an element before throwing an exception
 driver.implicitly_wait(15)
 # navigates to the link and waits until page is fully loaded

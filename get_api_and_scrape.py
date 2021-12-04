@@ -4,41 +4,39 @@
 # pip install pandas
 # pip install lxml
 
-# make sure you have the right version chrome driver in the /venv/bin
-
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-
-from selenium.webdriver.common.keys import Keys
-from bs4 import BeautifulSoup
-# regex
-import re
-from regex import regex
-
-import pandas as pd
-
-#import date time package
-from datetime import datetime
-
+# api field imports
 # imports csv
 import csv
 
-import os  # allows python to use operating system dependent functions
+# import url
+import urllib.request
+
+# import json
+import json
+
+# import regex
+import re
+
+# import date-time package
+from datetime import datetime
+
+# scrape field imports
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
+from bs4 import BeautifulSoup
+
 from selenium.webdriver.support.ui import WebDriverWait  # wait for the page to load
 from selenium.webdriver.support import expected_conditions  # wait for the page to load
 
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
-from datetime import datetime
+# create a blank list to store the four by fours
+four_by_four_list = []
 
-# import json
-import json
-
-# import url
-import urllib.request
-
-JSON_META_START_URL = "https://data.austintexas.gov/api/views/metadata/v1/"
+# create a blank list to store the story page links
+measure_story_link_list = []
 
 # create a new chrome session called driver
 driver = webdriver.Chrome(ChromeDriverManager().install())
@@ -46,41 +44,37 @@ driver = webdriver.Chrome(ChromeDriverManager().install())
 # set driver to wait for up to 30 seconds for an element before throwing an exception
 driver.implicitly_wait(30)
 
-# can totally just navigate to a "waiting for json measure" page or something to populate the chrome window
-# might be necessary if API calls take a really long time before it starts navigating somewhere
-
-four_by_four_list = []
-measure_link_list = []
-story_link_list = []
-
 # open the list of measure 4x4s in read mode
-with open('api_fields.csv', 'r') as read_obj:
+with open('measures_four_by_four_list.csv', 'r') as read_obj:
     # pass the file object to csv.reader() to get the reader object
     csv_reader = csv.reader(read_obj)
-
-    # skip the first row of headers
-    next(csv_reader)
-
     # Iterate over each row in the csv using reader object
     for row in csv_reader:
-        # link variable is a list that represents a link in each csv
+        # append the first item in the row at index 0 which is the 4x4 to the four_by_four_list
         four_by_four_list.append(row[0])
-        measure_link_list.append(row[1])
-        story_link_list.append(row[10])
+        # append the second item in the row at index 1 which is the story link to the measure_story_link_list
+        measure_story_link_list.append(row[1])
 
-print(four_by_four_list)
-print(measure_link_list)
-print(story_link_list)
+# API Fields
+# testing only - create a blank list to store measure links
+measure_link_list = []
 
+# create a blank list to store measure IDs
 measure_id_list = []
 
+# create a blank list to store measure names
 measure_name_list = []
 
+# create a blank list to store measure target values
+measure_target_value_list = []
+
+# create a blank list to store measure timestamps
+measure_data_last_timestamp_list = []
+
+# Scrape Fields
 measure_value_list = []
 
 measure_status_list = []
-
-measure_target_value_list = []
 
 recent_reporting_year_list = []
 
@@ -88,15 +82,25 @@ reporting_frequency_list = []
 
 page_update_date_list = []
 
-measure_data_last_timestamp_list = []
-
+# compiles the regex expression to search for the measure ID
 MEASURE_ID_SEARCH = re.compile("^.*?(?=(_|-| ))")
+
+# compiles the regex expression to search for frequency measures and page update dates
 FREQUENCY_MEASURE_SEARCH = re.compile("(?<=Reported:.)[^\n]*(?=Date)")
 FREQUENCY_MEASURE_NO_UPDATE_SEARCH = re.compile("(?<=Reported:.)[^\n]*(?=Present)")
 PAGE_UPDATE_DATE_SEARCH = re.compile("(?<=last updated:.)[^\n]*(?=Present)")
 
+
+# main loop index value
+index = 0
+
+# length of the list of measures to iterate
+list_length = len(four_by_four_list)
+
 # iterates through url list
-for four_by_four in four_by_four_list:
+while index < list_length:
+
+    four_by_four = four_by_four_list[index]
     print(four_by_four)
     # constructs the json URL for the two API calls
     measure_meta_one_url = "https://data.austintexas.gov/api/views/metadata/v1/" + four_by_four
@@ -153,14 +157,25 @@ for four_by_four in four_by_four_list:
     measure_link = 'https://data.austintexas.gov/d/' + four_by_four
     measure_link_list.append(measure_link)
 
-index = 0
-list_length = len(four_by_four_list)
+    # measure_story_link_text = str(measure_meta_two['metadata'])
 
-while index < list_length:
-    print(four_by_four_list[index])
-    # MEASURE PAGE:
-    # scraping the measure page values
-    # gets the next measure page link
+
+    # regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>\\]+|\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\))+(?:\(([^\s()<>\\]+|(\([^\s()<>\\]+\)))*\)|[^\s`!()\[\]{};:'\".,<>\\?«»“”‘’]))"
+
+    # measure_story_link_search = re.findall(regex, measure_story_link_text)
+    # measure_story_link = [x[0] for x in measure_story_link_search][0]
+
+    # print(measure_story_link)
+
+    # append the measure ID to the list of measure IDs
+    measure_id_list.append(measure_id)
+    # append the name of the measure to the list of measure names
+    measure_name_list.append(measure_name)
+    # append the target value to the list of targets
+    measure_target_value_list.append(measure_target_value)
+    # append the timestamp to the list of timestamps
+    measure_data_last_timestamp_list.append(measure_data_last_timestamp)
+
     scrape_url = measure_link_list[index]
 
     # navigate Selenium chrome driver to the measure page URL and waits until page is fully loaded
@@ -229,7 +244,7 @@ while index < list_length:
     # scraping the story page values
     # we do this separately because there are some stories that have multiple measures
     # gets the next story page link
-    scrape_url = story_link_list[index]
+    scrape_url = measure_story_link_list[index]
 
     # if the link isn't a full URL
     if not scrape_url.startswith('http'):
@@ -274,100 +289,81 @@ while index < list_length:
     # appends the page update date to the list of all page updates
     page_update_date_list.append(page_update_date)
 
+    # page_update_date_list.append(page_update_date)
+
+    # saves every 10 rows
+    if (index + 1) % 10 == 0:
+        with open('scrape_fields.csv', 'w', encoding='utf-8-sig') as myfile:
+
+            # feeds the field names in through a Python Dictionary
+            # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
+            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+
+            # write each of the field columns to a csv file
+            i = 0
+            sublist_length = len(measure_status_list)
+
+            wr.writerow(['4x4 (testing only)',
+                         'Measure Link (testing only)',
+                         'Story Link',
+                         'Measure Value',
+                         # 'Measure Color',
+                         'Measure Status',
+                         'Most Recent Reporting Year',
+                         'Reporting Frequency',
+                         'Page Update Date'
+                         ])
+            while i < sublist_length:
+                wr.writerow([four_by_four_list[i],
+                             measure_link_list[i],
+                             measure_story_link_list[i],
+                             measure_value_list[i],
+                             # measure_color_list[i],
+                             measure_status_list[i],
+                             recent_reporting_year_list[i],
+                             reporting_frequency_list[i],
+                             page_update_date_list[i]
+                             ])
+                i = i + 1
+
+    index = index + 1
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-with open('all_data_fields.csv', 'w', encoding='utf-8-sig') as myfile:
+# write the csv files
+# note: to get apostrophes to display properly in excel have to encode as utf-8
+with open('get_api_and_scrape.csv', 'w', encoding='utf-8-sig') as myfile:
 
     # feeds the field names in through a Python Dictionary
     # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 
-    # write each of the field columns to a csv file
+    # write each of the field columns  to csv
     index = 0
     list_length = len(four_by_four_list)
 
-    wr.writerow(['Measure ID',
-                 'Measure Name',
-                 'Story Link',
-                 'Measure Value',
-                 'Measure Status',
-                 'Target Value',
-                 'Reporting Frequency'
-                 'Most Recent Reporting Year',
-                 'Page Update Date'
-                 'Metadata Update Date'
-                ])
+    wr.writerow([
+        '4x4 (testing only)',
+        'Measure Link (testing only)',
+        'Measure ID',
+        'Measure Name',
+        'Reporting Frequency',
+        'Most Recent Reporting Year',
+        'Measure Value',
+        'Target Value',
+        'Metadata Update Date',
+        'Link to Story'])
     while index < list_length:
-        wr.writerow([measure_id_list[index],
-                     measure_name_list[index],
-                     story_link_list[index],
-                     measure_value_list[index],
-                     measure_status_list[index],
-                     measure_target_value_list[index],
-                     reporting_frequency_list[index],
-                     recent_reporting_year_list[index],
-                     page_update_date_list[index],
-                     measure_data_last_timestamp_list[index]
-                     ])
+        wr.writerow([
+            four_by_four_list[index],
+            measure_link_list[index],
+            measure_id_list[index],
+            measure_name_list[index],
+            reporting_frequency_list[index],
+            recent_reporting_year_list[index],
+            measure_value_list[index],
+            measure_target_value_list[index],
+            measure_data_last_timestamp_list[index],
+            measure_story_link_list[index]])
         index = index + 1
 
-# end the Selenium browser session and closes the browser window
 driver.quit()
