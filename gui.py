@@ -23,3 +23,6 @@ if __name__ == '__main__':
     else:
         print('Enter a valid input')
     gui()
+
+
+# to-do: pyqt stuff
