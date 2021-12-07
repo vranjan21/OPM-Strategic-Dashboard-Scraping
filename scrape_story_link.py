@@ -24,8 +24,10 @@ import time
 # imports csv file
 import csv
 
+import lxml
 
-def scrape_story_link():
+
+def scrape_story_link(save_folder_location):
     # launch url
     url = "https://data.austintexas.gov/stories/s/59fp-raw5"
 
@@ -124,7 +126,7 @@ def scrape_story_link():
         # increment the counter variable before starting the loop over
         x += 1
 
-    with open('story_link_list.csv', 'w') as myfile:
+    with open(save_folder_location + '/story_link_list.csv', 'w') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         for link in story_link_list:
             wr.writerow([link])
@@ -135,6 +137,14 @@ def scrape_story_link():
 
 # if the file is executed by itself
 if __name__ == '__main__':
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    open_file = QtWidgets.QFileDialog.getExistingDirectory()
+    print(open_file)
     # scrape_story_link.py executed as script
     # run the above function
-    scrape_story_link()
+    print('Copy and Paste the above path for the following dialog: ')
+    save_folder_location = input('Enter Save Folder Location: ')
+    scrape_story_link(save_folder_location)
+    sys.exit(app.exec_())

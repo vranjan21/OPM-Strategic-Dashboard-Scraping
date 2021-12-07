@@ -20,8 +20,10 @@ import time
 # imports csv file
 import csv
 
+import lxml
 
-def scrape_four_by_fours():
+
+def scrape_four_by_fours(open_file_location, save_folder_location):
     # create a new chrome session called driver
     driver = webdriver.Chrome(ChromeDriverManager().install())
 
@@ -31,7 +33,7 @@ def scrape_four_by_fours():
 
     story_link_list = []
     # open file in read mode
-    with open('story_link_list.csv', 'r') as read_obj:
+    with open(open_file_location, 'r') as read_obj:
         # pass the file object to reader() to get the reader object
         csv_reader = csv.reader(read_obj)
         # Iterate over each row in the csv using reader object
@@ -96,7 +98,7 @@ def scrape_four_by_fours():
             ordered_story_link_list.append(story_link)
 
     # write the csv files
-    with open('measures_four_by_four_list.csv', 'w') as myfile:
+    with open(save_folder_location + '/measures_four_by_four_list.csv', 'w') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 
         # write each of the field columns to a csv file
@@ -115,6 +117,22 @@ def scrape_four_by_fours():
 
 # if the file itself is executed
 if __name__ == '__main__':
-    # get_api_and_scrape.py executed as script
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    print('Select your story_link_list.csv file:')
+    open_file = QtWidgets.QFileDialog.getOpenFileName()
+    print(open_file[0])
+    print('Copy and Paste the above path for the following dialog: ')
+    open_file_location = input('Enter story_link_list.csv location: ')
+
+    # get the save directory
+    print('Select the folder to save measures_four_by_four_list.csv to: ')
+    open_file = QtWidgets.QFileDialog.getExistingDirectory()
+    print(open_file)
     # run the above function
-    scrape_four_by_fours()
+    print('Copy and Paste the above path for the following dialog: ')
+    save_folder_location = input('Enter Save Folder Location: ')
+    scrape_four_by_fours(open_file_location, save_folder_location)
+    sys.exit(app.exec_())
+

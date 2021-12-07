@@ -34,8 +34,10 @@ from selenium.common.exceptions import TimeoutException
 
 import traceback
 
+import lxml
 
-def get_api_and_scrape():
+
+def get_api_and_scrape(open_file_location, save_folder_location):
 
     # create a blank list to store the four by fours
     four_by_four_list = []
@@ -50,7 +52,7 @@ def get_api_and_scrape():
     driver.implicitly_wait(30)
 
     # open the list of measure 4x4s in read mode
-    with open('measures_four_by_four_list.csv', 'r') as read_obj:
+    with open(open_file_location, 'r') as read_obj:
         # pass the file object to csv.reader() to get the reader object
         csv_reader = csv.reader(read_obj)
         # Iterate over each row in the csv using reader object
@@ -388,6 +390,22 @@ def get_api_and_scrape():
 
 
 if __name__ == '__main__':
-    # get_api_and_scrape.py executed as script
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    print('Select your measures_four_by_four_list.csv file:')
+    open_file = QtWidgets.QFileDialog.getOpenFileName()
+    print(open_file[0])
+    print('Copy and Paste the above path for the following dialog: ')
+    open_file_location = input('Enter story_link_list.csv location: ')
+
+    # get the save directory
+    print('Select the folder to save get_api_and_scrape.csv to: ')
+    open_file = QtWidgets.QFileDialog.getExistingDirectory()
+    print(open_file)
     # run the above function
-    get_api_and_scrape()
+    print('Copy and Paste the above path for the following dialog: ')
+    save_folder_location = input('Enter Save Folder Location: ')
+    get_api_and_scrape(open_file_location, save_folder_location)
+    sys.exit(app.exec_())
+
