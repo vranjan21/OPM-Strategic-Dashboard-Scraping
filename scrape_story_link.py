@@ -140,6 +140,7 @@ if __name__ == '__main__':
     from PyQt5 import QtCore, QtGui, QtWidgets
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    print('Select where you want the story_link_list.csv to be written:')
     open_file = QtWidgets.QFileDialog.getExistingDirectory()
     print(open_file)
     # scrape_story_link.py executed as script
