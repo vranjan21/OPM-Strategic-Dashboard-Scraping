@@ -105,7 +105,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
 
     # write the csv files
     # note: to get apostrophes to display properly in excel have to encode as utf-8
-    filename = 'get_api_and_scrape_log_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '.csv'
+    filename = save_folder_location + '/get_api_and_scrape_log_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '.csv'
     with open(filename, 'w', encoding='utf-8-sig') as myfile:
 
         # feeds the field names in through a Python Dictionary
@@ -344,7 +344,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
 
     # write the csv files
     # note: to get apostrophes to display properly in excel have to encode as utf-8
-    with open('get_api_and_scrape.csv', 'w', encoding='utf-8-sig') as myfile:
+    with open(save_folder_location + '/get_api_and_scrape.csv', 'w', encoding='utf-8-sig') as myfile:
 
         # feeds the field names in through a Python Dictionary
         # also has a quote_all argument
