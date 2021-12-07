@@ -331,6 +331,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
                     measure_data_last_timestamp_list[index]
                 ])
 
+            # push
             # catches any exception that is generated
             except Exception as e:
                 # writes the records that were just collected
