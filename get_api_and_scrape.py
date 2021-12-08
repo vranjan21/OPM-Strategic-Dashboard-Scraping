@@ -398,7 +398,7 @@ if __name__ == '__main__':
     open_file = QtWidgets.QFileDialog.getOpenFileName()
     print(open_file[0])
     print('Copy and Paste the above path for the following dialog: ')
-    open_file_location = input('Enter story_link_list.csv location: ')
+    open_file_location = input('Enter measures_four_by_four_list.csv location: ')
 
     # get the save directory
     print('Select the folder to save get_api_and_scrape.csv to: ')
