@@ -36,7 +36,10 @@ import traceback
 
 import lxml
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
+# opens the measures_four_by_four_list.csv file
 def get_api_and_scrape(open_file_location, save_folder_location):
 
     # create a blank list to store the four by fours
@@ -394,11 +397,11 @@ if __name__ == '__main__':
     from PyQt5 import QtCore, QtGui, QtWidgets
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    print('Select your measures_four_by_four_list.csv file:')
+    print('Select your measure_4x4_and_story_link_list.csv file:')
     open_file = QtWidgets.QFileDialog.getOpenFileName()
     print(open_file[0])
     print('Copy and Paste the above path for the following dialog: ')
-    open_file_location = input('Enter measures_four_by_four_list.csv location: ')
+    open_file_location = input('Enter measure_4x4_and_story_link_list.csv location: ')
 
     # get the save directory
     print('Select the folder to save get_api_and_scrape.csv to: ')
@@ -408,5 +411,7 @@ if __name__ == '__main__':
     print('Copy and Paste the above path for the following dialog: ')
     save_folder_location = input('Enter Save Folder Location: ')
     get_api_and_scrape(open_file_location, save_folder_location)
+
+    # keeps the program running
     sys.exit(app.exec_())
 
