@@ -116,11 +116,8 @@ def scrape_story_link_and_four_by_fours(save_folder_location):
             # adds the url to the list of story links
             story_link_list.append(story_link_text)
 
+        print('Total Number of Story Links Scraped: ' + str(len(story_link_list)))
 
-        # Ask Selenium to click the back button
-        driver.execute_script("window.history.go(-1)")
-
-    print(len(story_link_list))
     # -------------------------------------------
     # The following section scrapes measure 4x4s
 
@@ -142,8 +139,18 @@ def scrape_story_link_and_four_by_fours(save_folder_location):
     # only has one of each story link
     ordered_story_link_list = []
 
+    # the following is to print out the progress
+    unique_story_link_list_length = len(unique_story_link_list)
+    story_link_counter = 0
+
+    print('Total Number of Unique Story Links: ' + str(unique_story_link_list_length))
+
     # iterates through unique story link list
     for story_link in unique_story_link_list:
+        # print which story is being scraped
+        story_link_counter += 1
+        print('Collecting measures from ' + str(story_link_counter) + ' of ' + str(unique_story_link_list_length) + ' unique stories')
+
         # navigates to the story URL page
         driver.get(story_link)
 
@@ -152,7 +159,7 @@ def scrape_story_link_and_four_by_fours(save_folder_location):
         try:
             WebDriverWait(driver, 30).until(expected_conditions.element_to_be_clickable((By.CLASS_NAME,
                                                                                          "measure-result-big-number")))
-            time.sleep(0.2)
+            time.sleep(0.3)
         # if it times out after 30 seconds, then it breaks out and continues forward
         except TimeoutException:
             print("link not found ... breaking out")
@@ -172,16 +179,20 @@ def scrape_story_link_and_four_by_fours(save_folder_location):
             # finds the very first match of a URL
             measure_link_raw = measure_link.find('a', href=True)
             measure_link_text = measure_link_raw['href']
+            print('Story Link: ')
+            print(story_link)
+            print('Measure Link: ')
             print(measure_link_text)
             # measure_link_list.append(measure_link_text)
             four_by_four_text = measure_link_text[-9:]
+            print('Measure 4x4: ')
             print(four_by_four_text)
             four_by_four_list.append(four_by_four_text)
             ordered_story_link_list.append(story_link)
 
     # write the csv file
     # opens the inputted save folder location and writes a measure_4x4s_and_story_links.csv file
-    with open(save_folder_location + '/measure_4x4_and_story_link_list.csv', 'w') as myfile:
+    with open(save_folder_location + '/measure_4x4_and_story_link_list.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 
         # write each of the field columns to a csv file

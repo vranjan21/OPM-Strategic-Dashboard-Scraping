@@ -108,8 +108,9 @@ def get_api_and_scrape(open_file_location, save_folder_location):
 
     # write the csv files
     # note: to get apostrophes to display properly in excel have to encode as utf-8
+    # have to add a newline = '' because of Windows compatibility issues
     filename = save_folder_location + '/get_api_and_scrape_log_' + datetime.now().strftime("%Y%m%d-%H%M%S") + '.csv'
-    with open(filename, 'w', encoding='utf-8-sig') as myfile:
+    with open(filename, 'w', newline='', encoding='utf-8-sig') as myfile:
 
         # feeds the field names in through a Python Dictionary
         # also has a quote_all argument - formats everything in the csv with quotes debatable whether to keep this or not
@@ -135,6 +136,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
             try:
                 # set the four by four that will be evaluated
                 four_by_four = four_by_four_list[index]
+                print('Scraping ' + str(index + 1) + ' of ' + str(list_length) + ' measures')
                 print('Four by Four:')
                 print(four_by_four)
                 # constructs the json URL for the two API calls
@@ -292,7 +294,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
                 # gets all the text of the story page as a single string
                 story_text = soup.find(id="content").get_text().replace('\n', '')
                 print('Story Text:')
-                print(story_text)
+                # print(story_text)
 
                 if FREQUENCY_MEASURE_SEARCH.search(story_text):
                     # searches for and stores the reporting frequency in the story text
