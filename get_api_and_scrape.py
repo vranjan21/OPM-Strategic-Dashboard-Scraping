@@ -117,7 +117,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 
         wr.writerow([
-            '4x4 (testing only)',
+            'Measure 4x4',
             'Link to Measure',
             'Link to Story',
             'Measure ID',
@@ -350,7 +350,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
 
     # write the csv files
     # note: to get apostrophes to display properly in excel have to encode as utf-8
-    with open(save_folder_location + '/get_api_and_scrape.csv', 'w', encoding='utf-8-sig') as myfile:
+    with open(save_folder_location + '/get_api_and_scrape.csv', 'w', newline='', encoding='utf-8-sig') as myfile:
 
         # feeds the field names in through a Python Dictionary
         # also has a quote_all argument
@@ -362,7 +362,7 @@ def get_api_and_scrape(open_file_location, save_folder_location):
         list_length = len(four_by_four_list)
 
         wr.writerow([
-            '4x4 (testing only)',
+            'Measure 4x4',
             'Link to Measure',
             'Link to Story',
             'Measure ID',
